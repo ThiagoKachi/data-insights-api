@@ -117,8 +117,6 @@ Os PDFs gerados podem conter:
 
 
 ## User module
-- SignIn
-- SignUp
 - FindByEmail
 
 - ResetPassword
