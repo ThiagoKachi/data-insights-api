@@ -1,13 +1,14 @@
 import { z } from 'zod';
-import { ISignIn } from '../domain/models/ISignIn';
+import { ISignUp } from '../domain/models/ISignUp';
 
 const signUpValidatorSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6),
+  password_hash: z.string().min(6),
+  name: z.string().min(6),
 });
 
 export class SignUpValidator {
-  validate(data: ISignIn) {
+  validate(data: ISignUp) {
     return signUpValidatorSchema.parse(data);
   }
 }

@@ -114,11 +114,3 @@ Os PDFs gerados podem conter:
 
 - [Filas na AWS para Processamento Assíncrono com Lambda e SQS](https://www.youtube.com/live/Cwg8iiAMSSs)
 - [Serviço de geração de relatórios assíncrono com Serverless Framework](https://www.youtube.com/live/DzMEmd4hsRA)
-
-
-## User module
-- FindByEmail
-
-- ResetPassword
-  - Send a link to the user email to reset the password *
-  - https://supabase.com/docs/reference/javascript/auth-signout

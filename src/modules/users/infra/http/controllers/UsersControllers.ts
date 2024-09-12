@@ -1,4 +1,5 @@
 import { ISignIn } from '@modules/users/domain/models/ISignIn';
+import { ISignUp } from '@modules/users/domain/models/ISignUp';
 import { SignInUseCase } from '@modules/users/useCases/SignInUseCase';
 import { SignUpUseCase } from '@modules/users/useCases/SignUpUseCase';
 import { FastifyReply, FastifyRequest } from 'fastify';
@@ -21,12 +22,9 @@ export class UsersController {
   }
 
   public async signUp(request: FastifyRequest, reply: FastifyReply) {
-    const { email, password } = request.body as ISignIn;
+    const data = request.body as ISignUp;
 
-    const user = await this.signUpUseCase.execute({
-      email,
-      password,
-    });
+    const user = await this.signUpUseCase.execute(data);
 
     return reply.status(201).send(user);
   }

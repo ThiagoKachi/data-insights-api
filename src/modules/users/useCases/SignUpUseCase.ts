@@ -1,12 +1,14 @@
 import { AppError } from '@shared/errors/AppError';
 import { ISignUp, ISignUpResponse } from '../domain/models/ISignUp';
-import { UsersRepository } from '../infra/supabase/repositories/UsersRepository';
+import { UsersRepository } from '../infra/database/repositories/UsersRepository';
+import BcryptHashProvider from '../providers/HashProvider/implementations/BcryptHashProvider';
 import { SignUpValidator } from '../validators/signUpValidator';
 
 export class SignUpUseCase {
   constructor(
     private usersRepository: UsersRepository,
     private signUpValidator: SignUpValidator,
+    private hashProvider: BcryptHashProvider,
   ) {}
 
   public async execute(signUpData: ISignUp): Promise<ISignUpResponse> {
@@ -14,25 +16,18 @@ export class SignUpUseCase {
 
     const user = await this.usersRepository.findByEmail(validatedData.email);
 
-    if (user && user.data.user) {
+    if (user) {
       throw new AppError('User already exists', 401);
     }
 
-    const { data, error } = await this.usersRepository.signUp(validatedData);
+    const password_hash = await this.hashProvider
+      .generateHash(validatedData.password_hash);
 
-    console.log({ data, error }, 'aqui');
+    const data = await this.usersRepository.signUp({
+      ...validatedData,
+      password_hash,
+    });
 
-    if (error) {
-      throw new AppError(error.message, 401);
-    }
-
-    if (data.user) {
-      await this.usersRepository.insertUserData({
-        id: data.user.id!,
-        email: data.user.email!,
-      });
-    }
-
-    return { data };
+    return { ...data, password_hash: undefined };
   }
 }

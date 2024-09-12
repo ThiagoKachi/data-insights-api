@@ -1,8 +1,7 @@
-import { PostgrestError, User } from '@supabase/supabase-js';
-
 export interface IUser {
-  data: {
-    user: User;
-  };
-  error: PostgrestError | null;
+  id: string;
+  name: string;
+  email: string;
+  password_hash: string;
+  created_at: Date;
 }

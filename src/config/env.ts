@@ -7,4 +7,6 @@ export const env = {
   DATABASE_USER: process.env.DATABASE_USER!,
   DATABASE_PASSWORD: process.env.DATABASE_PASSWORD!,
   DATABASE_NAME: process.env.DATABASE_NAME!,
+  RESEND_API_KEY: process.env.RESEND_API_KEY!,
+  APP_WEB_URL: process.env.APP_WEB_URL!,
 };

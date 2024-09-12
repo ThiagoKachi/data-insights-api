@@ -1,4 +1,3 @@
-import { AuthError, Session, User, WeakPassword } from '@supabase/supabase-js';
 
 export interface ISignIn {
   email: string;
@@ -6,10 +5,5 @@ export interface ISignIn {
 }
 
 export interface ISignInResponse {
-  data: {
-    user: User | null;
-    session: Session | null;
-    weakPassword: WeakPassword | undefined;
-  };
-  error?: AuthError | null;
+  token: string;
 }

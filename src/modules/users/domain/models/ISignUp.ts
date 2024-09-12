@@ -1,14 +1,13 @@
-import { AuthError, Session, User } from '@supabase/supabase-js';
-
 export interface ISignUp {
   email: string;
-  password: string;
+  password_hash: string;
+  name: string;
 }
 
 export interface ISignUpResponse {
-  data: {
-    user: User | null;
-    session: Session | null;
-  };
-  error?: AuthError | null;
+  id: string;
+  name: string;
+  email: string;
+  password_hash: string | undefined;
+  created_at: Date;
 }
