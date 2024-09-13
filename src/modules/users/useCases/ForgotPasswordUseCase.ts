@@ -1,4 +1,3 @@
-import { EXP_TIME_IN_DAYS } from '@config/constants';
 import { env } from '@config/env';
 import { AppError } from '@shared/errors/AppError';
 import { TokensRepository } from '../infra/database/repositories/TokensRepository';
@@ -21,15 +20,23 @@ export class ForgotPasswordUseCase {
       throw new AppError('User not found', 404);
     }
 
-    const token = await this.tokenProvider.generateToken({ userId: user.id });
+    await this.tokensRepository.expireOldTokens(user.id);
 
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + EXP_TIME_IN_DAYS);
+    const tokenCount = await this.tokensRepository.countActiveTokens(user.id);
+
+    if (tokenCount >= 3) {
+      throw new AppError(
+        'You have reached the maximum number of attempts, try again later.',
+        429
+      );
+    }
+
+    const token = await this.tokenProvider.generateToken({ userId: user.id });
 
     await this.tokensRepository.generate({
       user_id: user.id,
       token,
-      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      expires_at: new Date(Date.now() + 30 * 60 * 1000),
     });
 
     await this.resendMail.sendMail({
