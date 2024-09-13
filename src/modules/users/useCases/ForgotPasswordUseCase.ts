@@ -1,16 +1,16 @@
 import { env } from '@config/env';
 import { AppError } from '@shared/errors/AppError';
-import { TokensRepository } from '../infra/database/repositories/TokensRepository';
-import { UsersRepository } from '../infra/database/repositories/UsersRepository';
-import { ResendMail } from '../providers/MailProvider';
-import { TokenProvider } from '../providers/TokenProvider/implementations/TokenProvider';
+import { ITokensRepository } from '../domain/repositories/ITokensRepository';
+import { IUsersRepository } from '../domain/repositories/IUsersRepository';
+import { IMailProvider } from '../providers/MailProvider/models/IMailProvider';
+import { ITokenProvider } from '../providers/TokenProvider/models/ITokenProvider';
 
 export class ForgotPasswordUseCase {
   constructor(
-    private usersRepository: UsersRepository,
-    private tokenProvider: TokenProvider,
-    private resendMail: ResendMail,
-    private tokensRepository: TokensRepository,
+    private usersRepository: IUsersRepository,
+    private tokenProvider: ITokenProvider,
+    private resendMail: IMailProvider,
+    private tokensRepository: ITokensRepository,
   ) {}
 
   public async execute(email: string): Promise<void> {

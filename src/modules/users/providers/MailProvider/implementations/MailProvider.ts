@@ -13,7 +13,7 @@ interface IParseMailTemplate {
   variables: ITemplateVariable;
 }
 
-interface ISendMail {
+export interface ISendMail {
   to: string;
   from?: string;
   subject: string;
@@ -27,7 +27,7 @@ export class ResendMail {
     const mailTemplate = new HandlebarsMailTemplate();
 
     const forgotPasswordTemplate = path
-      .resolve(__dirname, '..', '..', 'views', 'forgot_password.hbs');
+      .resolve(__dirname, '..', '..', '..', 'views', 'forgot_password.hbs');
 
     const { error } = await resend.emails.send({
       from: from || 'Equipe Data Insights TJK <thiago@thikachi.dev.br>',

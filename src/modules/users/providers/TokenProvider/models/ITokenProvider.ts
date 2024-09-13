@@ -1,3 +1,7 @@
+interface ITokenProviderPayload {
+  userId: string;
+}
+
 export interface ITokenProvider {
-  generateToken(payload: string): Promise<string>;
+  generateToken(payload: ITokenProviderPayload): Promise<string>;
 }

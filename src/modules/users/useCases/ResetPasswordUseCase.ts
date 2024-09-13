@@ -1,14 +1,14 @@
 import { AppError } from '@shared/errors/AppError';
 import { IResetToken } from '../domain/models/IResetToken';
-import { TokensRepository } from '../infra/database/repositories/TokensRepository';
-import { UsersRepository } from '../infra/database/repositories/UsersRepository';
-import BcryptHashProvider from '../providers/HashProvider/implementations/BcryptHashProvider';
+import { ITokensRepository } from '../domain/repositories/ITokensRepository';
+import { IUsersRepository } from '../domain/repositories/IUsersRepository';
+import { IHashProvider } from '../providers/HashProvider/models/IHashProvider';
 
 export class ResetPasswordUseCase {
   constructor(
-    private usersRepository: UsersRepository,
-    private tokensRepository: TokensRepository,
-    private hashProvider: BcryptHashProvider,
+    private usersRepository: IUsersRepository,
+    private tokensRepository: ITokensRepository,
+    private hashProvider: IHashProvider,
   ) {}
 
   public async execute(data: IResetToken): Promise<void> {

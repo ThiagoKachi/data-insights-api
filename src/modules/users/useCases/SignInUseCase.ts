@@ -1,16 +1,16 @@
 import { AppError } from '@shared/errors/AppError';
 import { ISignIn, ISignInResponse } from '../domain/models/ISignIn';
-import { UsersRepository } from '../infra/database/repositories/UsersRepository';
-import BcryptHashProvider from '../providers/HashProvider/implementations/BcryptHashProvider';
-import TokenProvider from '../providers/TokenProvider/implementations/TokenProvider';
+import { IUsersRepository } from '../domain/repositories/IUsersRepository';
+import { IHashProvider } from '../providers/HashProvider/models/IHashProvider';
+import { ITokenProvider } from '../providers/TokenProvider/models/ITokenProvider';
 import { SignInValidator } from '../validators/signInValidator';
 
 export class SignInUseCase {
   constructor(
-    private usersRepository: UsersRepository,
+    private usersRepository: IUsersRepository,
     private signInValidator: SignInValidator,
-    private hashProvider: BcryptHashProvider,
-    private tokenProvider: TokenProvider,
+    private hashProvider: IHashProvider,
+    private tokenProvider: ITokenProvider,
   ) {}
 
   public async execute(signInData: ISignIn): Promise<ISignInResponse> {

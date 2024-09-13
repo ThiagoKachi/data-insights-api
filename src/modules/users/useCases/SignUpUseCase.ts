@@ -1,14 +1,14 @@
 import { AppError } from '@shared/errors/AppError';
 import { ISignUp, ISignUpResponse } from '../domain/models/ISignUp';
-import { UsersRepository } from '../infra/database/repositories/UsersRepository';
-import BcryptHashProvider from '../providers/HashProvider/implementations/BcryptHashProvider';
+import { IUsersRepository } from '../domain/repositories/IUsersRepository';
+import { IHashProvider } from '../providers/HashProvider/models/IHashProvider';
 import { SignUpValidator } from '../validators/signUpValidator';
 
 export class SignUpUseCase {
   constructor(
-    private usersRepository: UsersRepository,
+    private usersRepository: IUsersRepository,
     private signUpValidator: SignUpValidator,
-    private hashProvider: BcryptHashProvider,
+    private hashProvider: IHashProvider,
   ) {}
 
   public async execute(signUpData: ISignUp): Promise<ISignUpResponse> {
