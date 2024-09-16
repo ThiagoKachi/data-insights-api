@@ -4,6 +4,7 @@ import { env } from '@config/env';
 import FastifyCORS from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import FastifyJWT from '@fastify/jwt';
+import FastifyMultipart from '@fastify/multipart';
 import rateLimit from '@fastify/rate-limit';
 import { AppError } from '@shared/errors/AppError';
 import Fastify, { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
@@ -11,6 +12,7 @@ import { ZodError } from 'zod';
 import { appRoutes } from './routes';
 
 export const fastify = Fastify();
+fastify.register(FastifyMultipart);
 
 fastify.register(helmet, { global: true });
 fastify.register(FastifyCORS);

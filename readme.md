@@ -61,6 +61,9 @@ Os arquivos enviados pelo usuário devem conter as seguintes colunas:
 8. **Cliente/Fornecedor**: (opcional) Nome do cliente ou fornecedor.
 9. **Número da Nota Fiscal**: (opcional) Número da nota fiscal relacionada.
 10. **Responsável**: (opcional) Pessoa ou equipe responsável.
+11. **Centro de Custo**: Identifica a área ou projeto ao qual a transação está vinculada.
+12. **Data de Vencimento**: No caso de despesas, para indicar quando devem ser pagas.
+14. **Impostos**: Detalhes sobre impostos aplicáveis, se houver.
 
 ### **Campos para Mostrar na Tela (Front-end)**:
 
