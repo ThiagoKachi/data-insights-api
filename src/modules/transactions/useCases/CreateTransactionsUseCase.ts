@@ -1,21 +1,37 @@
-import formidable from 'formidable';
-import * as XLSX from 'xlsx';
-import { ITransactionsRepository } from '../domain/repositories/ITransactionsRepository';
+import { AppError } from '@shared/errors/AppError';
+import { ICreateTransactionRequest, ITransactionsRepository } from '../domain/repositories/ITransactionsRepository';
+import { CreateTransactionValidator } from '../validators/createTransactionValidator';
+import { DateValidator } from '../validators/dateValidator';
 
 export class CreateTransactionsUseCase {
   constructor(
-    private usersRepository: ITransactionsRepository,
+    private transactionsRepository: ITransactionsRepository,
+    private createTransactionvalidator: CreateTransactionValidator,
+    private dateValidator: DateValidator,
   ) {}
 
-  public async execute(): Promise<void> {
-    const form = new formidable.IncomingForm();
-    form.parse(req, (err, fields, files) => {
-    /* grab the first file */
-      const f = Object.entries(files)[0][1];
-      const path = f.filepath;
-      const workbook = XLSX.readFile(path);
+  public async execute({
+    transactionData,
+    userId
+  }: ICreateTransactionRequest): Promise<void> {
+    for (const data of transactionData) {
+      try {
+        await this.createTransactionvalidator.validate(data);
+      } catch (error) {
+        throw new AppError(`Invalid data ${error}`, 400);
+      }
+    }
 
-    /* DO SOMETHING WITH workbook HERE */
+    const dataWithValidDate = transactionData.map((data) => {
+      const transaction_date = this.dateValidator.validate(data.transaction_date);
+      const due_date = data.due_date ? this.dateValidator.validate(data.due_date) : null;
+
+      return { ...data, transaction_date, due_date };
+    });
+
+    await this.transactionsRepository.create({
+      transactionData: dataWithValidDate,
+      userId
     });
   }
 }

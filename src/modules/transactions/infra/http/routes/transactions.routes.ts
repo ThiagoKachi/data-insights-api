@@ -1,9 +1,14 @@
+import { makeTransactionsUseCase } from '@modules/transactions/factories/makeTransactionsUseCase';
+import { authMiddleware } from '@shared/infra/http/middlewares/isAuthenticated';
 import { FastifyInstance } from 'fastify';
-import { TransactionsController } from '../controllers/UsersControllers';
+import { transactionFileMiddleware } from '../middlewares/transactionsFile';
 
-// const transactionsUseCases = makeUserUseCase();
-const transactionsUseCases = new TransactionsController();
+const transactionsUseCases = makeTransactionsUseCase();
 
 export async function transactionsRoutes(fastify: FastifyInstance) {
-  fastify.post('/',async (req, res) => transactionsUseCases.create(req, res));
+  fastify.post(
+    '/',
+    { onRequest: [authMiddleware], preHandler: [transactionFileMiddleware] },
+    async (req, res) => transactionsUseCases.create(req, res)
+  );
 }

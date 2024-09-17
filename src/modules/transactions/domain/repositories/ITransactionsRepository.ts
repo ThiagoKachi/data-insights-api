@@ -1,5 +1,13 @@
-import { ICreateTransaction, ICreateTransactionResponse } from '../models/ICreateTransaction';
+import { ICreateTransaction } from '../models/ICreateTransaction';
+
+export interface ICreateTransactionRequest {
+  transactionData: ICreateTransaction[];
+  userId: string;
+}
 
 export interface ITransactionsRepository {
-  create(data: ICreateTransaction): Promise<ICreateTransactionResponse>;
+  create({
+    transactionData,
+    userId
+  }: ICreateTransactionRequest): Promise<void>;
 }

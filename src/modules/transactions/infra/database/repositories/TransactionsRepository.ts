@@ -1,5 +1,4 @@
-import { ICreateTransaction, ICreateTransactionResponse } from '@modules/transactions/domain/models/ICreateTransaction';
-import { ITransactionsRepository } from '@modules/transactions/domain/repositories/ITransactionsRepository';
+import { ICreateTransactionRequest, ITransactionsRepository } from '@modules/transactions/domain/repositories/ITransactionsRepository';
 import { knex } from '@shared/infra/libs/knex';
 import { Knex } from 'knex';
 
@@ -10,9 +9,12 @@ export class TransactionsRepository implements ITransactionsRepository {
     this.knexClient = knex;
   }
 
-  public async create(userData: ICreateTransaction): Promise<ICreateTransactionResponse> {
-    await this.knexClient('transactions').insert(userData);
+  public async create({
+    transactionData,
+    userId
+  }: ICreateTransactionRequest): Promise<void> {
+    const data = transactionData.map((fin) => ({ ...fin, user_id: userId }));
 
-    return {} as ICreateTransactionResponse;
+    await this.knexClient('financial_transactions').insert(data);
   }
 }
