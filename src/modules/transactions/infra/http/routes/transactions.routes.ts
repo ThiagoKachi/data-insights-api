@@ -11,6 +11,11 @@ export async function transactionsRoutes(fastify: FastifyInstance) {
     { onRequest: [authMiddleware], preHandler: [transactionFileMiddleware] },
     async (req, res) => transactionsUseCases.create(req, res)
   );
+  fastify.post(
+    '/batch',
+    { onRequest: [authMiddleware] },
+    async (req, res) => transactionsUseCases.batchRemove(req, res)
+  );
   fastify.delete(
     '/:id',
     { onRequest: [authMiddleware] },

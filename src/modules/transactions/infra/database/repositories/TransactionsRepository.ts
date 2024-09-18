@@ -10,6 +10,14 @@ export class TransactionsRepository implements ITransactionsRepository {
     this.knexClient = knex;
   }
 
+  public async findManyById(transactionIds: string[]): Promise<ITransaction[] | undefined> {
+    const transactions = await this
+      .knexClient('financial_transactions')
+      .whereIn('id', transactionIds);
+
+    return transactions;
+  }
+
   public async findById(transactionId: string): Promise<ITransaction | undefined> {
     const transaction = await this
       .knexClient('financial_transactions')
@@ -31,8 +39,16 @@ export class TransactionsRepository implements ITransactionsRepository {
   public async remove(transactionId: string, userId: string): Promise<void> {
     await this
       .knexClient('financial_transactions')
-      .delete()
       .where('user_id', userId)
-      .andWhere('id', transactionId);
+      .andWhere('id', transactionId)
+      .delete();
+  }
+
+  public async removeMany(transactionIds: string[], userId: string): Promise<void> {
+    await this
+      .knexClient('financial_transactions')
+      .where('user_id', userId)
+      .whereIn('id', transactionIds)
+      .delete();
   }
 }
