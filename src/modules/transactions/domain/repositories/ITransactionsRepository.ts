@@ -1,4 +1,5 @@
 import { ICreateTransaction } from '../models/ICreateTransaction';
+import { ITransaction } from '../models/ITransaction';
 
 export interface ICreateTransactionRequest {
   transactionData: ICreateTransaction[];
@@ -10,4 +11,6 @@ export interface ITransactionsRepository {
     transactionData,
     userId
   }: ICreateTransactionRequest): Promise<void>;
+  findById(transactionId: string): Promise<ITransaction | undefined>;
+  remove(transactionId: string, userId: string): Promise<void>;
 }

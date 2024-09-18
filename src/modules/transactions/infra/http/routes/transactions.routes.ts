@@ -11,4 +11,9 @@ export async function transactionsRoutes(fastify: FastifyInstance) {
     { onRequest: [authMiddleware], preHandler: [transactionFileMiddleware] },
     async (req, res) => transactionsUseCases.create(req, res)
   );
+  fastify.delete(
+    '/:id',
+    { onRequest: [authMiddleware] },
+    async (req, res) => transactionsUseCases.remove(req, res)
+  );
 }
