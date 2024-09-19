@@ -6,6 +6,21 @@ import { transactionFileMiddleware } from '../middlewares/transactionsFile';
 const transactionsUseCases = makeTransactionsUseCase();
 
 export async function transactionsRoutes(fastify: FastifyInstance) {
+  fastify.get(
+    '/',
+    { onRequest: [authMiddleware] },
+    async (req, res) => transactionsUseCases.listAll(req, res)
+  );
+  fastify.get(
+    '/files/:id',
+    { onRequest: [authMiddleware] },
+    async (req, res) => transactionsUseCases.listByFile(req, res)
+  );
+  fastify.get(
+    '/files',
+    { onRequest: [authMiddleware] },
+    async (req, res) => transactionsUseCases.listAllFiles(req, res)
+  );
   fastify.post(
     '/',
     { onRequest: [authMiddleware], preHandler: [transactionFileMiddleware] },
@@ -15,6 +30,11 @@ export async function transactionsRoutes(fastify: FastifyInstance) {
     '/batch',
     { onRequest: [authMiddleware] },
     async (req, res) => transactionsUseCases.batchRemove(req, res)
+  );
+  fastify.put(
+    '/:id',
+    { onRequest: [authMiddleware] },
+    async (req, res) => transactionsUseCases.update(req, res)
   );
   fastify.delete(
     '/:id',

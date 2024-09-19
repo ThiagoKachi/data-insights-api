@@ -12,6 +12,7 @@ export interface ICreateTransaction {
   cost_center: string;
   due_date: Date | null;
   taxes: number | null;
+  file_id: string;
 }
 
 export interface ICreateTransactionResponse {

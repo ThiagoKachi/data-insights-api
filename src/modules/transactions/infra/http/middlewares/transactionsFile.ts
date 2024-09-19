@@ -33,6 +33,7 @@ export async function transactionFileMiddleware(
     data.push(...sheetData);
 
     request.transactionData = sheetData;
+    request.fileName = file.filename;
   } catch {
     return reply.code(400);
   }

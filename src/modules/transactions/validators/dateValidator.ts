@@ -2,7 +2,7 @@ import { AppError } from '@shared/errors/AppError';
 import { format, parse } from 'date-fns';
 
 export class DateValidator {
-  validate(date: Date): Date {
+  validate(date: string): Date {
     const dateToString = date.toString();
 
     try {

@@ -9,6 +9,12 @@ declare module 'knex/types/tables' {
       password_hash: string
       created_at: Date
     },
+    files: {
+      id: string
+      file_name: string
+      created_at: Date;
+      user_id: string
+    },
     user_tokens: {
       id: string
       user_id: string
@@ -34,6 +40,7 @@ declare module 'knex/types/tables' {
       taxes: number | null
       created_at: Date
       updated_at: Date
+      file_id: string;
     }
   }
 }

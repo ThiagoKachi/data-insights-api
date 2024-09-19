@@ -1,5 +1,8 @@
 import { env } from '@config/env';
 import { Knex, knex as setupKnex } from 'knex';
+import { attachPaginate } from 'knex-paginate';
+
+attachPaginate();
 
 export const config: Knex.Config = {
   client: 'pg',
