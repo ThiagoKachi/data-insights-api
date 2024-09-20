@@ -1,9 +1,6 @@
 import { ITransactionRequest } from '@modules/transactions/domain/models/ITransactionRequest';
-import { ITransactionsByFileRequest } from '@modules/transactions/domain/models/ITransactionsByFileRequest';
 import { IUpdateTransaction } from '@modules/transactions/domain/models/IUpdateTransaction';
 import { CreateTransactionsUseCase } from '@modules/transactions/useCases/CreateTransactionsUseCase';
-import { ListFilesTransactionsUseCase } from '@modules/transactions/useCases/ListFilesTransactionsUseCase';
-import { ListTransactionsByFileUseCase } from '@modules/transactions/useCases/ListTransactionsByFileUseCase';
 import { ListTransactionsUseCase } from '@modules/transactions/useCases/ListTransactionsUseCase';
 import { RemoveManyTransactionsUseCase } from '@modules/transactions/useCases/RemoveManyTransactionsUseCase';
 import { RemoveTransactionsUseCase } from '@modules/transactions/useCases/RemoveTransactionsUseCase';
@@ -17,8 +14,6 @@ export class TransactionsController {
     private removeManyTransactionsUseCase: RemoveManyTransactionsUseCase,
     private updateTransactionsUseCase: UpdateTransactionsUseCase,
     private listTransactionsUseCase: ListTransactionsUseCase,
-    private listTransactionsByFileUseCase: ListTransactionsByFileUseCase,
-    private listFilesTransactionsUseCase: ListFilesTransactionsUseCase,
   ) {}
 
   public async listAll(request: FastifyRequest, reply: FastifyReply) {
@@ -34,40 +29,6 @@ export class TransactionsController {
       pageIndex: Number(pageIndex),
       pageSize: Number(pageSize),
       searchParams: searchParams as ITransactionRequest['searchParams']
-    });
-
-    return reply.status(200).send(transactions);
-  }
-
-  public async listByFile(request: FastifyRequest, reply: FastifyReply) {
-    const userId = request.userId!;
-    const { id } = request.params as { id: string };
-    const {
-      pageIndex,
-      pageSize,
-    } = request.query as ITransactionsByFileRequest;
-
-    const transactions = await this.listTransactionsByFileUseCase.execute({
-      id,
-      userId,
-      pageIndex: Number(pageIndex),
-      pageSize: Number(pageSize),
-    });
-
-    return reply.status(200).send(transactions);
-  }
-
-  public async listAllFiles(request: FastifyRequest, reply: FastifyReply) {
-    const userId = request.userId!;
-    const {
-      pageIndex,
-      pageSize,
-    } = request.query as ITransactionsByFileRequest;
-
-    const transactions = await this.listFilesTransactionsUseCase.execute({
-      userId,
-      pageIndex: Number(pageIndex),
-      pageSize: Number(pageSize),
     });
 
     return reply.status(200).send(transactions);

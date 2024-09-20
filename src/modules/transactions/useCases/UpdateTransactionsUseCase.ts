@@ -1,5 +1,6 @@
 import { AppError } from '@shared/errors/AppError';
-import { ITransactionsRepository, IUpdateTransactionRequest } from '../domain/repositories/ITransactionsRepository';
+import { IUpdateTransactionRequest } from '../domain/models/IUpdateTransactionRequest';
+import { ITransactionsRepository } from '../domain/repositories/ITransactionsRepository';
 import { DateValidator } from '../validators/dateValidator';
 import { UpdateTransactionValidator } from '../validators/updateTransactionValidator';
 

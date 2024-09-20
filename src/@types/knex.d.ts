@@ -13,7 +13,8 @@ declare module 'knex/types/tables' {
       id: string
       file_name: string
       created_at: Date;
-      user_id: string
+      user_id: string;
+      transactions_quantity: number;
     },
     user_tokens: {
       id: string

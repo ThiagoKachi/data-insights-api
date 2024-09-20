@@ -1,15 +1,9 @@
-import { ICreateFileResponse } from '@modules/transactions/domain/models/ICreateFileResponse';
-import { IFiles } from '@modules/transactions/domain/models/IFiles';
-import { IFilesTransactionResponse } from '@modules/transactions/domain/models/IFilesTransactionResponse';
+import { ICreateTransactionRequest } from '@modules/transactions/domain/models/ICreateTransactionRequest';
 import { ITransaction } from '@modules/transactions/domain/models/ITransaction';
 import { ITransactionRequest } from '@modules/transactions/domain/models/ITransactionRequest';
 import { ITransactionResponse } from '@modules/transactions/domain/models/ITransactionResponse';
-import { ITransactionsByFileRequest } from '@modules/transactions/domain/models/ITransactionsByFileRequest';
-import {
-  ICreateTransactionRequest,
-  ITransactionsRepository,
-  IUpdateTransactionRequest,
-} from '@modules/transactions/domain/repositories/ITransactionsRepository';
+import { IUpdateTransactionRequest } from '@modules/transactions/domain/models/IUpdateTransactionRequest';
+import { ITransactionsRepository } from '@modules/transactions/domain/repositories/ITransactionsRepository';
 import { knex } from '@shared/infra/libs/knex';
 import { convertDateToUSFormat } from '@shared/utils/formatDate';
 import { Knex } from 'knex';
@@ -19,14 +13,6 @@ export class TransactionsRepository implements ITransactionsRepository {
 
   constructor() {
     this.knexClient = knex;
-  }
-
-  public async findFileById(fileId: string): Promise<IFiles | undefined> {
-    const file = await this.knexClient('files')
-      .where('id', fileId)
-      .first();
-
-    return file;
   }
 
   public async listAll({
@@ -69,34 +55,6 @@ export class TransactionsRepository implements ITransactionsRepository {
     return transactions;
   }
 
-  public async listByFile({
-    id,
-    userId,
-    pageIndex,
-    pageSize
-  }: ITransactionsByFileRequest): Promise<ITransactionResponse | undefined> {
-    const transactions = await this
-      .knexClient('financial_transactions')
-      .where('user_id', userId)
-      .andWhere('file_id', id)
-      .paginate({ perPage: pageSize, currentPage: pageIndex });
-
-    return transactions;
-  }
-
-  public async listAllFiles({
-    userId,
-    pageIndex,
-    pageSize
-  }: ITransactionsByFileRequest): Promise<IFilesTransactionResponse | undefined> {
-    const filesTransactions = await this
-      .knexClient('files')
-      .where('user_id', userId)
-      .paginate({ perPage: pageSize, currentPage: pageIndex });
-
-    return filesTransactions;
-  }
-
   public async findManyById(
     transactionIds: string[]
   ): Promise<ITransaction[] | undefined> {
@@ -124,18 +82,6 @@ export class TransactionsRepository implements ITransactionsRepository {
     const data = transactionData.map((fin) => ({ ...fin, user_id: userId }));
 
     await this.knexClient('financial_transactions').insert(data);
-  }
-
-  public async createFile(
-    fileName: string,
-    userId: string
-  ): Promise<ICreateFileResponse | undefined> {
-    const [data] = await this
-      .knexClient('files')
-      .insert({ file_name: fileName, user_id: userId })
-      .returning('*');
-
-    return data;
   }
 
   public async update({

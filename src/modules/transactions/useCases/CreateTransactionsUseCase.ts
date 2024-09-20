@@ -1,11 +1,14 @@
+import { ITransactionsFilesRepository } from '@modules/transactionsFiles/domain/repositories/ITransactionsFilesRepository';
 import { AppError } from '@shared/errors/AppError';
-import { ICreateTransactionRequest, ITransactionsRepository } from '../domain/repositories/ITransactionsRepository';
+import { ICreateTransactionRequest } from '../domain/models/ICreateTransactionRequest';
+import { ITransactionsRepository } from '../domain/repositories/ITransactionsRepository';
 import { CreateTransactionValidator } from '../validators/createTransactionValidator';
 import { DateValidator } from '../validators/dateValidator';
 
 export class CreateTransactionsUseCase {
   constructor(
     private transactionsRepository: ITransactionsRepository,
+    private transactionsFilesRepository: ITransactionsFilesRepository,
     private createTransactionvalidator: CreateTransactionValidator,
     private dateValidator: DateValidator,
   ) {}
@@ -23,7 +26,11 @@ export class CreateTransactionsUseCase {
       }
     }
 
-    const file = await this.transactionsRepository.createFile(fileName!, userId);
+    const file = await this.transactionsFilesRepository.createFile({
+      fileName: fileName!,
+      userId,
+      quantity: transactionData.length
+    });
 
     const dataWithValidDate = transactionData.map((data) => {
       const transaction_date = this.dateValidator.validate(data.transaction_date.toString());

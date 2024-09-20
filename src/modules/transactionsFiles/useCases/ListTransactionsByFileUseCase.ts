@@ -1,10 +1,10 @@
+import { ITransactionResponse } from '@modules/transactions/domain/models/ITransactionResponse';
 import { AppError } from '@shared/errors/AppError';
-import { ITransactionResponse } from '../domain/models/ITransactionResponse';
 import { ITransactionsByFileRequest } from '../domain/models/ITransactionsByFileRequest';
-import { ITransactionsRepository } from '../domain/repositories/ITransactionsRepository';
+import { ITransactionsFilesRepository } from '../domain/repositories/ITransactionsFilesRepository';
 
 export class ListTransactionsByFileUseCase {
-  constructor(private transactionsRepository: ITransactionsRepository) {}
+  constructor(private transactionsFilesRepository: ITransactionsFilesRepository) {}
 
   public async execute({
     id,
@@ -12,13 +12,13 @@ export class ListTransactionsByFileUseCase {
     pageIndex = 1,
     pageSize = 20,
   }: ITransactionsByFileRequest): Promise<ITransactionResponse | undefined> {
-    const file = await this.transactionsRepository.findFileById(id);
+    const file = await this.transactionsFilesRepository.findFileById(id);
 
     if (!file) {
       throw new AppError('File not found', 404);
     }
 
-    const transactions = await this.transactionsRepository.listByFile({
+    const transactions = await this.transactionsFilesRepository.listTransactionsByFile({
       id,
       userId,
       pageIndex,
