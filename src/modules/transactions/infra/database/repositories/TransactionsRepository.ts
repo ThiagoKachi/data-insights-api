@@ -1,5 +1,7 @@
 import { ICreateTransactionRequest } from '@modules/transactions/domain/models/ICreateTransactionRequest';
 import { ITransaction } from '@modules/transactions/domain/models/ITransaction';
+import { ITransactionReportRequest } from '@modules/transactions/domain/models/ITransactionReportRequest';
+import { ITransactionReportResponse } from '@modules/transactions/domain/models/ITransactionReportResponse';
 import { ITransactionRequest } from '@modules/transactions/domain/models/ITransactionRequest';
 import { ITransactionResponse } from '@modules/transactions/domain/models/ITransactionResponse';
 import { IUpdateTransactionRequest } from '@modules/transactions/domain/models/IUpdateTransactionRequest';
@@ -13,6 +15,93 @@ export class TransactionsRepository implements ITransactionsRepository {
 
   constructor() {
     this.knexClient = knex;
+  }
+
+  public async getReport({
+    userId,
+    initialPeriod,
+    finalPeriod
+  }: ITransactionReportRequest): Promise<ITransactionReportResponse | undefined> {
+    const transactions = await this
+      .knexClient('financial_transactions')
+      .where('user_id', userId)
+      .andWhereBetween(
+        'transaction_date',
+        [convertDateToUSFormat(initialPeriod), convertDateToUSFormat(finalPeriod)]
+      );
+
+    const transactionsFormated = transactions.map((transaction) => {
+      return {
+        date: transaction.transaction_date.toISOString(),
+        description: transaction.description,
+        type: transaction.type,
+        value: transaction.value,
+        payment_method: transaction.payment_method,
+      };
+    });
+
+    const taxes = transactions.map((tax) => {
+      if (tax.taxes) {
+        return {
+          date: tax.transaction_date.toISOString(),
+          transaction_value: tax.value,
+          taxes: tax.taxes,
+        };
+      } else {
+        return null;
+      }
+    }).filter((tax) => tax !== null);
+
+    const expenses = transactions
+      .filter((transaction) => transaction.type === 'outcome')
+      .map((t) => {return { ...t, value: Number(t.value)};});
+    const revenues = transactions
+      .filter((transaction) => transaction.type === 'income')
+      .map((t) => {return { ...t, value: Number(t.value)};});
+
+    const revenuesFormated = revenues.map((transaction) => {
+      return {
+        date: transaction.transaction_date.toISOString(),
+        entity: transaction.entity,
+        description: transaction.description,
+        value: transaction.value,
+        payment_method: transaction.payment_method,
+      };
+    });
+
+    const expensesFormated = expenses.map((transaction) => {
+      return {
+        date: transaction.transaction_date.toISOString(),
+        entity: transaction.entity,
+        description: transaction.description,
+        value: transaction.value,
+        payment_method: transaction.payment_method,
+      };
+    });
+
+    function finalBalanceFormated() {
+      const revenue = revenues.reduce((acc, cur) => acc + Number(cur.value), 0);
+      const expense = expenses.reduce((acc, cur) => acc + Number(cur.value), 0);
+
+      return parseFloat((revenue - expense).toFixed(2));
+    }
+
+    const totalExpensesFormated = expenses.reduce((acc, cur) => acc + cur.value, 0);
+    const totalRevenuesFormated = revenues.reduce((acc, cur) => acc + cur.value, 0);
+    const totalTaxesFormated = taxes.reduce((acc, cur) => acc + Number(cur.taxes), 0);
+
+    return {
+      initialPeriod: initialPeriod,
+      finalPeriod: finalPeriod,
+      expenses: expensesFormated,
+      revenues: revenuesFormated,
+      taxes: taxes.length > 0 ? taxes : null,
+      transactions: transactionsFormated,
+      totalExpenses: parseFloat((totalExpensesFormated).toFixed(2)),
+      totalRevenue: parseFloat((totalRevenuesFormated).toFixed(2)),
+      finalBalance: finalBalanceFormated(),
+      totalTaxes: parseFloat((totalTaxesFormated).toFixed(2)),
+    };
   }
 
   public async listAll({

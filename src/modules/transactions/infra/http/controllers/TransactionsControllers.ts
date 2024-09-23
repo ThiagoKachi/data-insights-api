@@ -1,9 +1,11 @@
+import { ITransactionReportRequest } from '@modules/transactions/domain/models/ITransactionReportRequest';
 import { ITransactionRequest } from '@modules/transactions/domain/models/ITransactionRequest';
 import { IUpdateTransaction } from '@modules/transactions/domain/models/IUpdateTransaction';
 import { CreateTransactionsUseCase } from '@modules/transactions/useCases/CreateTransactionsUseCase';
 import { ListTransactionsUseCase } from '@modules/transactions/useCases/ListTransactionsUseCase';
 import { RemoveManyTransactionsUseCase } from '@modules/transactions/useCases/RemoveManyTransactionsUseCase';
 import { RemoveTransactionsUseCase } from '@modules/transactions/useCases/RemoveTransactionsUseCase';
+import { TransactionsReportUseCase } from '@modules/transactions/useCases/TransactionsReportUseCase';
 import { UpdateTransactionsUseCase } from '@modules/transactions/useCases/UpdateTransactionsUseCase';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
@@ -14,6 +16,7 @@ export class TransactionsController {
     private removeManyTransactionsUseCase: RemoveManyTransactionsUseCase,
     private updateTransactionsUseCase: UpdateTransactionsUseCase,
     private listTransactionsUseCase: ListTransactionsUseCase,
+    private transactionsReportUseCase: TransactionsReportUseCase,
   ) {}
 
   public async listAll(request: FastifyRequest, reply: FastifyReply) {
@@ -29,6 +32,22 @@ export class TransactionsController {
       pageIndex: Number(pageIndex),
       pageSize: Number(pageSize),
       searchParams: searchParams as ITransactionRequest['searchParams']
+    });
+
+    return reply.status(200).send(transactions);
+  }
+
+  public async getReport(request: FastifyRequest, reply: FastifyReply) {
+    const userId = request.userId!;
+    const {
+      initialPeriod,
+      finalPeriod
+    } = request.query as ITransactionReportRequest;
+
+    const transactions = await this.transactionsReportUseCase.execute({
+      userId,
+      initialPeriod,
+      finalPeriod
     });
 
     return reply.status(200).send(transactions);

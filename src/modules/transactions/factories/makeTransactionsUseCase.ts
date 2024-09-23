@@ -1,5 +1,6 @@
 import { TransactionsController } from '../infra/http/controllers/TransactionsControllers';
 import { makeCreateTransactionsUseCase } from './makeCreateTransactionsUseCase';
+import { makeGetTransactionsReportUseCase } from './makeGetTransactionsReportUseCase';
 import { makeListTransactionsUseCase } from './makeListTransactionsUseCase';
 import { makeRemoveManyTransactionUseCase } from './makeRemoveManyTransactionUseCase';
 import { makeRemoveTransactionUseCase } from './makeRemoveTransactionUseCase';
@@ -11,6 +12,7 @@ export function makeTransactionsUseCase() {
   const removeManyTransactionUseCase = makeRemoveManyTransactionUseCase();
   const updateTransactionsUseCase = makeUpdateTransactionsUseCase();
   const listTransactionsUseCase = makeListTransactionsUseCase();
+  const getTransactionsReportUseCase = makeGetTransactionsReportUseCase();
 
   return new TransactionsController(
     createTransactionsUseCase,
@@ -18,5 +20,6 @@ export function makeTransactionsUseCase() {
     removeManyTransactionUseCase,
     updateTransactionsUseCase,
     listTransactionsUseCase,
+    getTransactionsReportUseCase
   );
 }

@@ -93,7 +93,6 @@ Os dados extraídos da planilha serão exibidos em uma tabela interativa, com os
 Os PDFs gerados podem conter:
 
 1. **Resumo Financeiro**: Total de receitas, despesas e saldo.
-2. **Gráficos**: Distribuição de receitas e despesas por categorias.
 3. **Detalhamento por Data**: Lista de transações filtradas por data.
 4. **Tabelas**: Resumo categorizado das transações.
 

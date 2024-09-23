@@ -11,6 +11,11 @@ export async function transactionsRoutes(fastify: FastifyInstance) {
     { onRequest: [authMiddleware] },
     async (req, res) => transactionsUseCases.listAll(req, res)
   );
+  fastify.get(
+    '/report',
+    { onRequest: [authMiddleware] },
+    async (req, res) => transactionsUseCases.getReport(req, res)
+  );
   fastify.post(
     '/',
     { onRequest: [authMiddleware], preHandler: [transactionFileMiddleware] },

@@ -1,5 +1,7 @@
 import { ICreateTransactionRequest } from '../models/ICreateTransactionRequest';
 import { ITransaction } from '../models/ITransaction';
+import { ITransactionReportRequest } from '../models/ITransactionReportRequest';
+import { ITransactionReportResponse } from '../models/ITransactionReportResponse';
 import { ITransactionRequest } from '../models/ITransactionRequest';
 import { ITransactionResponse } from '../models/ITransactionResponse';
 import { IUpdateTransactionRequest } from '../models/IUpdateTransactionRequest';
@@ -20,6 +22,11 @@ export interface ITransactionsRepository {
     pageSize,
     searchParams
   }: ITransactionRequest): Promise<ITransactionResponse | undefined>;
+  getReport({
+    userId,
+    initialPeriod,
+    finalPeriod
+  }: ITransactionReportRequest): Promise<ITransactionReportResponse | undefined>;
   findById(transactionId: string): Promise<ITransaction | undefined>;
   findManyById(transactionIds: string[]): Promise<ITransaction[] | undefined>;
   remove(transactionId: string, userId: string): Promise<void>;
