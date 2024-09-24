@@ -44,13 +44,17 @@ export class TransactionsController {
       finalPeriod
     } = request.query as ITransactionReportRequest;
 
-    const transactions = await this.transactionsReportUseCase.execute({
+    const pdfBuffer = await this.transactionsReportUseCase.execute({
       userId,
       initialPeriod,
       finalPeriod
     });
 
-    return reply.status(200).send(transactions);
+    return reply
+      .type('application/pdf')
+      .header('Content-Disposition', 'attachment; filename="transactions.pdf"')
+      .status(200)
+      .send(pdfBuffer);
   }
 
   public async create(request: FastifyRequest, reply: FastifyReply) {

@@ -9,6 +9,7 @@ import rateLimit from '@fastify/rate-limit';
 import { AppError } from '@shared/errors/AppError';
 import Fastify, { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import { ZodError } from 'zod';
+import '../libs/handleBars';
 import { appRoutes } from './routes';
 
 export const fastify = Fastify();

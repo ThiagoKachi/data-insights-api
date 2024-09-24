@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório Financeiro Detalhado</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h2 {
+      color: #4CAF50;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .value {
+      font-size: 14px;
+      width: 80px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Relatório por Período</h2>
+  <p>
+    <strong>Resumo Financeiro do Período:</strong> {{initialPeriod}} - {{finalPeriod}}
+  </p>
+  <ul>
+    <li>Total de Receitas: {{totalRevenue}}</li>
+    <li>Total de Despesas: {{totalExpenses}}</li>
+    <li>Saldo Final: {{finalBalance}}</li>
+  </ul>
+
+  <h3>Tabela de Transações</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Descrição</th>
+        <th>Tipo</th>
+        <th>Valor (R$)</th>
+        <th>Método de Pagamento</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#map transactions}}
+        <tr>
+          <td>{{formatDate this.date}}</td>
+          <td>{{truncate this.description}}</td>
+          <td>{{type this.type}}</td>
+          <td class="value">R$ {{this.value}}</td>
+          <td>{{paymentType this.payment_method}}</td>
+        </tr>
+      {{/map}}
+    </tbody>
+  </table>
+
+  <h2>Relatório de Receitas</h2>
+  <p><strong>Total de Receitas no Período:</strong> {{totalRevenue}}</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Cliente/Fornecedor</th>
+        <th>Descrição</th>
+        <th>Valor Recebido (R$)</th>
+        <th>Método de Pagamento</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#map revenues}}
+        <tr>
+          <td>{{formatDate this.date}}</td>
+          <td>{{truncate this.entity}}</td>
+          <td>{{truncate this.description}}</td>
+          <td class="value">R$ {{this.value}}</td>
+          <td>{{paymentType this.payment_method}}</td>
+        </tr>
+      {{/map}}
+    </tbody>
+  </table>
+
+  <h2>Relatório de Despesas</h2>
+  <p><strong>Total de Despesas no Período:</strong> {{totalExpenses}}</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Fornecedor</th>
+        <th>Descrição</th>
+        <th>Valor Pago (R$)</th>
+        <th>Método de Pagamento</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#map expenses}}
+        <tr>
+          <td>{{formatDate this.date}}</td>
+          <td>{{truncate this.entity}}</td>
+          <td>{{truncate this.description}}</td>
+          <td class="value">R$ {{this.value}}</td>
+          <td>{{paymentType this.payment_method}}</td>
+        </tr>
+      {{/map}}
+    </tbody>
+  </table>
+
+  <h2>Relatório de Impostos</h2>
+  <p><strong>Total de Impostos Pagos:</strong> {{totalTaxes}}</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Valor da Transação (R$)</th>
+        <th>Imposto Pago (R$)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#map taxes}}
+        <tr>
+          <td>{{formatDate this.date}}</td>
+          <td>R$ {{this.transaction_value}}</td>
+          <td>R$ {{this.taxes}}</td>
+        </tr>
+      {{/map}}
+    </tbody>
+  </table>
+</body>
+</html>
