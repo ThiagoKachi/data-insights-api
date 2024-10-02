@@ -30,6 +30,12 @@ export async function transactionFileMiddleware(
 
     const sheetData: ICreateTransaction[] = XLSX.utils.sheet_to_json(worksheet);
 
+    if (sheetData.length > 500) {
+      return reply.code(400).send({
+        message: 'File must contain up to 500 transactions',
+      });
+    }
+
     data.push(...sheetData);
 
     request.transactionData = sheetData;
