@@ -6,6 +6,7 @@ import { ListTransactionsUseCase } from '@modules/transactions/useCases/ListTran
 import { RemoveManyTransactionsUseCase } from '@modules/transactions/useCases/RemoveManyTransactionsUseCase';
 import { RemoveTransactionsUseCase } from '@modules/transactions/useCases/RemoveTransactionsUseCase';
 import { TransactionsReportUseCase } from '@modules/transactions/useCases/TransactionsReportUseCase';
+import { TransactionsResumeUseCase } from '@modules/transactions/useCases/TransactionsResumeUseCase';
 import { UpdateTransactionsUseCase } from '@modules/transactions/useCases/UpdateTransactionsUseCase';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
@@ -17,6 +18,7 @@ export class TransactionsController {
     private updateTransactionsUseCase: UpdateTransactionsUseCase,
     private listTransactionsUseCase: ListTransactionsUseCase,
     private transactionsReportUseCase: TransactionsReportUseCase,
+    private transactionsResumeUseCase: TransactionsResumeUseCase,
   ) {}
 
   public async listAll(request: FastifyRequest, reply: FastifyReply) {
@@ -55,6 +57,16 @@ export class TransactionsController {
       .header('Content-Disposition', 'attachment; filename="transactions.pdf"')
       .status(200)
       .send(pdfBuffer);
+  }
+
+  public async getResume(request: FastifyRequest, reply: FastifyReply) {
+    const userId = request.userId!;
+
+    const transactionsResume = await this.transactionsResumeUseCase.execute({
+      userId
+    });
+
+    return reply.status(200).send(transactionsResume);
   }
 
   public async create(request: FastifyRequest, reply: FastifyReply) {

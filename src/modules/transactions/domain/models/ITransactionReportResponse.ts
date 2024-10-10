@@ -1,4 +1,4 @@
-interface ITransactionBody {
+export interface ITransactionBody {
   date: string;
   entity: string;
   description: string;
@@ -6,7 +6,7 @@ interface ITransactionBody {
   payment_method: string;
 }
 
-interface ITaxesBody {
+export interface ITaxesBody {
   date: string;
   transaction_value: number;
   taxes: number;

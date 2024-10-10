@@ -4,6 +4,8 @@ import { ITransactionReportRequest } from '@modules/transactions/domain/models/I
 import { ITransactionReportResponse } from '@modules/transactions/domain/models/ITransactionReportResponse';
 import { ITransactionRequest } from '@modules/transactions/domain/models/ITransactionRequest';
 import { ITransactionResponse } from '@modules/transactions/domain/models/ITransactionResponse';
+import { ITransactionResumeRequest } from '@modules/transactions/domain/models/ITransactionResumeRequest';
+import { ITransactionResumeResponse } from '@modules/transactions/domain/models/ITransactionResumeResponse';
 import { IUpdateTransactionRequest } from '@modules/transactions/domain/models/IUpdateTransactionRequest';
 import { ITransactionsRepository } from '@modules/transactions/domain/repositories/ITransactionsRepository';
 import { knex } from '@shared/infra/libs/knex';
@@ -104,6 +106,51 @@ export class TransactionsRepository implements ITransactionsRepository {
     };
   }
 
+  public async getResume({
+    userId,
+  }: ITransactionResumeRequest): Promise<ITransactionResumeResponse | undefined> {
+    const transactions = await this
+      .knexClient('financial_transactions')
+      .where('user_id', userId);
+
+    const taxes = transactions.map((tax) => {
+      if (tax.taxes) {
+        return {
+          date: tax.transaction_date.toISOString(),
+          transaction_value: tax.value,
+          taxes: tax.taxes,
+        };
+      } else {
+        return null;
+      }
+    }).filter((tax) => tax !== null);
+
+    const expenses = transactions
+      .filter((transaction) => transaction.type === 'outcome')
+      .map((t) => {return { ...t, value: Number(t.value)};});
+    const revenues = transactions
+      .filter((transaction) => transaction.type === 'income')
+      .map((t) => {return { ...t, value: Number(t.value)};});
+
+    function finalBalanceFormated() {
+      const revenue = revenues.reduce((acc, cur) => acc + Number(cur.value), 0);
+      const expense = expenses.reduce((acc, cur) => acc + Number(cur.value), 0);
+
+      return parseFloat((revenue - expense).toFixed(2));
+    }
+
+    const totalExpensesFormated = expenses.reduce((acc, cur) => acc + cur.value, 0);
+    const totalRevenuesFormated = revenues.reduce((acc, cur) => acc + cur.value, 0);
+    const totalTaxesFormated = taxes.reduce((acc, cur) => acc + Number(cur.taxes), 0);
+
+    return {
+      totalExpenses: parseFloat((totalExpensesFormated).toFixed(2)),
+      totalRevenue: parseFloat((totalRevenuesFormated).toFixed(2)),
+      finalBalance: finalBalanceFormated(),
+      totalTaxes: parseFloat((totalTaxesFormated).toFixed(2)),
+    };
+  }
+
   public async listAll({
     userId,
     pageIndex,
@@ -112,6 +159,7 @@ export class TransactionsRepository implements ITransactionsRepository {
   }: ITransactionRequest): Promise<ITransactionResponse | undefined> {
     const transactions = await this.knexClient('financial_transactions')
       .where('user_id', userId)
+      .orderBy('created_at', 'desc')
       .modify((qb) => {
         if (searchParams?.initial_date && searchParams?.final_date) {
           qb.where(
@@ -139,7 +187,7 @@ export class TransactionsRepository implements ITransactionsRepository {
           }
         );
       })
-      .paginate({ perPage: pageSize, currentPage: pageIndex });
+      .paginate({ perPage: pageSize, currentPage: pageIndex, isLengthAware: true });
 
     return transactions;
   }

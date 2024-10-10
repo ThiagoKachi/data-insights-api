@@ -4,6 +4,8 @@ import { ITransactionReportRequest } from '../models/ITransactionReportRequest';
 import { ITransactionReportResponse } from '../models/ITransactionReportResponse';
 import { ITransactionRequest } from '../models/ITransactionRequest';
 import { ITransactionResponse } from '../models/ITransactionResponse';
+import { ITransactionResumeRequest } from '../models/ITransactionResumeRequest';
+import { ITransactionResumeResponse } from '../models/ITransactionResumeResponse';
 import { IUpdateTransactionRequest } from '../models/IUpdateTransactionRequest';
 
 export interface ITransactionsRepository {
@@ -27,6 +29,9 @@ export interface ITransactionsRepository {
     initialPeriod,
     finalPeriod
   }: ITransactionReportRequest): Promise<ITransactionReportResponse | undefined>;
+  getResume({
+    userId
+  }: ITransactionResumeRequest): Promise<ITransactionResumeResponse | undefined>;
   findById(transactionId: string): Promise<ITransaction | undefined>;
   findManyById(transactionIds: string[]): Promise<ITransaction[] | undefined>;
   remove(transactionId: string, userId: string): Promise<void>;

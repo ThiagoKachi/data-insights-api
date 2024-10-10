@@ -34,7 +34,7 @@ export class TransactionsFilesRepository implements ITransactionsFilesRepository
       .knexClient('financial_transactions')
       .where('user_id', userId)
       .andWhere('file_id', id)
-      .paginate({ perPage: pageSize, currentPage: pageIndex });
+      .paginate({ perPage: pageSize, currentPage: pageIndex, isLengthAware: true });
 
     return transactions;
   }
@@ -46,8 +46,10 @@ export class TransactionsFilesRepository implements ITransactionsFilesRepository
   }: ITransactionsByFileRequest): Promise<IFilesTransactionResponse | undefined> {
     const filesTransactions = await this
       .knexClient('files')
-      .where('user_id', userId)
-      .paginate({ perPage: pageSize, currentPage: pageIndex });
+      .join('users', 'files.user_id', 'users.id')
+      .where('files.user_id', userId)
+      .select('files.*', 'users.name', 'users.email')
+      .paginate({ perPage: pageSize, currentPage: pageIndex, isLengthAware: true });
 
     return filesTransactions;
   }
